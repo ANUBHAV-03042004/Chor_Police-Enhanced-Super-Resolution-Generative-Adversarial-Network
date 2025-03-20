@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## ESRGAN (Enhanced SRGAN) [:rocket: [BasicSR](https://github.com/xinntao/BasicSR)] [[Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN)]
 
 :sparkles: **New Updates.**
@@ -200,3 +201,6 @@ larger training patch size. (Evaluated on Set5 dataset with RGB channels.)
   <img height="250" src="figures/patch_a.png">
   <img height="250" src="figures/patch_b.png">
 </p>
+=======
+Hi this is a pre-trained model on Enhanced Super-Resolution Generative Adversarial Network 
+>>>>>>> 7241eddcbdb7380535ae62c3a298f730dd413804
