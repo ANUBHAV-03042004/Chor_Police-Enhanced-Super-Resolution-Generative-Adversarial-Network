@@ -66,4 +66,6 @@ def download_file(filename):
     return send_from_directory("results", filename, as_attachment=True)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True)
+     port = int(os.environ.get("PORT", 5000))  # Use Railway's assigned port
+     app.run(host="0.0.0.0", port=port,debug=True)
