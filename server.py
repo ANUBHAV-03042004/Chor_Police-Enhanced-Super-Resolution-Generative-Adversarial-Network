@@ -7,16 +7,16 @@ from flask import Flask, render_template, request, send_from_directory
 
 app = Flask(__name__)
 
-# Ensure the necessary directories exist
+# Ensure necessary directories exist
 os.makedirs('LR', exist_ok=True)
 os.makedirs('results', exist_ok=True)
 
 # Load the ESRGAN model
 model_path = 'models/RRDB_ESRGAN_x4.pth'
-device = torch.device('cpu')  # Use 'cuda' for GPU if available
+device = torch.device('cpu')  # Use 'cuda' if available
 
 model = arch.RRDBNet(3, 3, 64, 23, gc=32)
-model.load_state_dict(torch.load(model_path), strict=True)
+model.load_state_dict(torch.load(model_path, map_location=device), strict=True)
 model.eval()
 model = model.to(device)
 
@@ -27,33 +27,27 @@ def home():
         if not file or file.filename == "":
             return render_template("index.html", error="No file selected")
 
-        # Save the file to the LR directory
+        # Save the file
         input_image_path = os.path.join("LR", file.filename)
         file.save(input_image_path)
 
-        # Load and preprocess the input image
+        # Load and preprocess the image
         img = cv2.imread(input_image_path)
         img = img * 1.0 / 255  # Normalize
         img = torch.from_numpy(np.transpose(img[:, :, [2, 1, 0]], (2, 0, 1))).float()
         img_LR = img.unsqueeze(0).to(device)
 
-        # Run the ESRGAN model
+        # Run the model
         with torch.no_grad():
             output = model(img_LR).data.squeeze().float().cpu().clamp_(0, 1).numpy()
 
-        # Post-process the output
+        # Post-process and save output
         output = np.transpose(output[[2, 1, 0], :, :], (1, 2, 0))  # Convert to BGR
         output = (output * 255.0).round().astype(np.uint8)
-
-        # Save the enhanced image
         output_image_path = os.path.join("results", f"{os.path.splitext(file.filename)[0]}_rlt.png")
         cv2.imwrite(output_image_path, output)
 
-        return render_template(
-            "index.html",
-            input_image=file.filename,
-            output_image=os.path.basename(output_image_path)
-        )
+        return render_template("index.html", input_image=file.filename, output_image=os.path.basename(output_image_path))
 
     return render_template("index.html")
 
@@ -65,6 +59,9 @@ def serve_LR_file(filename):
 def download_file(filename):
     return send_from_directory("results", filename, as_attachment=True)
 
+# Required for Vercel deployment
+def handler(event, context):
+    return app(event, context)
+
 if __name__ == "__main__":
-    app.run(debug=True)
-    
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
