@@ -124,7 +124,7 @@ body {
             <br>
             <input style="color:white" type="file" name="file" id="file" accept="image/*" required>
             <br><br>
-            <button type="submit">Enhance</button>
+            <button type="submit">Generate</button>
         </form>
 
         {% if input_image and output_image %}
@@ -137,12 +137,12 @@ body {
 
                 <!-- Enhanced Image -->
                 <div class="image-wrapper">
-                    <h3>Enhanced Image</h3>
+                    <h3>Generated Image</h3>
                     <img src="{{ url_for('download_file', filename=output_image) }}" alt="Enhanced Image">
                     <br>
                 </div>
             </div>
-            <a href="{{ url_for('download_file', filename=output_image) }}" class="download-link" download>Download Enhanced Image</a>
+            <a href="{{ url_for('download_file', filename=output_image) }}" class="download-link" download>Download Generated Image</a>
         {% endif %}
 
         {% if error %}
