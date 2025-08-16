@@ -1,0 +1,7 @@
+{
+  "python": {
+    "version": "3.10"
+  },
+  "build_command": "",
+  "start_command": "gunicorn app:app"
+}
